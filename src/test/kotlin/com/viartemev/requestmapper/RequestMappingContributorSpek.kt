@@ -27,13 +27,32 @@ object RequestMappingContributorSpek : Spek({
             }
         }
         context("getItemsByName with 2 mapping items") {
+            val psiElement = mock<PsiElement> {}
+            val navigationItems = listOf(
+                RequestMappingItem(psiElement, "/api/v1/users", "GET"),
+                RequestMappingItem(psiElement, "/api/v2/users", "GET")
+            )
             it("should return item a particular name") {
-                val psiElement = mock<PsiElement> {}
-                val navigationItems = listOf(
-                    RequestMappingItem(psiElement, "/api/v1/users", "GET"),
-                    RequestMappingItem(psiElement, "/api/v2/users", "GET")
-                )
+
                 val itemsByName = RequestMappingContributor(testAnnotationSearcher, navigationItems).getItemsByName("GET /api/v1/users", "pattern", DummyProject.getInstance(), false)
+                itemsByName.size shouldEqualTo 1
+                itemsByName[0].name shouldEqual "GET /api/v1/users"
+            }
+
+            it("should return correct item if name contains leading spaces") {
+                val itemsByName = RequestMappingContributor(testAnnotationSearcher, navigationItems).getItemsByName("GET  /api/v1/users", "pattern", DummyProject.getInstance(), false)
+                itemsByName.size shouldEqualTo 1
+                itemsByName[0].name shouldEqual "GET /api/v1/users"
+            }
+
+            it("should return correct item if name contains trailing spaces") {
+                val itemsByName = RequestMappingContributor(testAnnotationSearcher, navigationItems).getItemsByName("GET /api/v1/users ", "pattern", DummyProject.getInstance(), false)
+                itemsByName.size shouldEqualTo 1
+                itemsByName[0].name shouldEqual "GET /api/v1/users"
+            }
+
+            it("should return correct item if http method contains leading spaces") {
+                val itemsByName = RequestMappingContributor(testAnnotationSearcher, navigationItems).getItemsByName(" GET /api/v1/users ", "pattern", DummyProject.getInstance(), false)
                 itemsByName.size shouldEqualTo 1
                 itemsByName[0].name shouldEqual "GET /api/v1/users"
             }

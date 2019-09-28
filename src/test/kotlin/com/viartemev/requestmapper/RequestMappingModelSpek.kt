@@ -11,6 +11,11 @@ object RequestMappingModelSpek : Spek({
     val requestMappingModel = RequestMappingModel(DummyProject.getInstance())
 
     describe("RequestMappingModel") {
+        context("matches on pattern only with space") {
+            it("should return true") {
+                assertTrue(requestMappingModel.matches("POST /api/v1/product/{product-id}/items/{item-id}", " "))
+            }
+        }
         context("matches on pattern only with slash") {
             it("should return true") {
                 assertTrue(requestMappingModel.matches("POST /api/v1/product/{product-id}/items/{item-id}", "/"))
@@ -19,6 +24,16 @@ object RequestMappingModelSpek : Spek({
         context("matches on pattern without slash") {
             it("should return true") {
                 assertTrue(requestMappingModel.matches("POST /api/v1/product/{product-id}/items/{item-id}", "product"))
+            }
+        }
+        context("matches on pattern without slash with leading space") {
+            it("should return true") {
+                assertTrue(requestMappingModel.matches("POST /api/v1/product/{product-id}/items/{item-id}", " product"))
+            }
+        }
+        context("matches on pattern without slash with trailing space") {
+            it("should return true") {
+                assertTrue(requestMappingModel.matches("POST /api/v1/product/{product-id}/items/{item-id}", " product"))
             }
         }
         context("matches on pattern without slash with lower case method") {
