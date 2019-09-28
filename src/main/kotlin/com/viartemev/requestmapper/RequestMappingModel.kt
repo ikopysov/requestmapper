@@ -35,15 +35,16 @@ class RequestMappingModel(project: Project) : FilteringGotoByModel<FileType>(pro
     override fun willOpenEditor(): Boolean = false
 
     override fun matches(popupItem: String, userPattern: String): Boolean {
-        return if (userPattern == "/") {
+        val normalizedUserPattern = userPattern.replace("\\s+".toRegex(), " ").trim()
+        return if (normalizedUserPattern == "/") {
             true
-        } else if (!userPattern.contains('/')) {
+        } else if (!normalizedUserPattern.contains('/')) {
             val (method, path) = popupItem.split(" ", limit = 2)
-            path.contains(userPattern) || method.contains(userPattern, ignoreCase = true)
+            path.contains(normalizedUserPattern) || method.contains(normalizedUserPattern, ignoreCase = true)
         } else {
             Path.isSubpathOf(
                 PopupPath(popupItem).toPath(),
-                RequestedUserPath(userPattern).toPath()
+                RequestedUserPath(normalizedUserPattern).toPath()
             )
         }
     }

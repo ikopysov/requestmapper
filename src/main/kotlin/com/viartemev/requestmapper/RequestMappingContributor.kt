@@ -21,8 +21,9 @@ class RequestMappingContributor(private val annotationSearcher: (string: String,
     }
 
     override fun getItemsByName(name: String, pattern: String, project: Project, includeNonProjectItems: Boolean): Array<NavigationItem> {
+        val normalizedName = name.replace("\\s+".toRegex(), " ").trim()
         return navigationItems
-            .filter { it.name == name }
+            .filter { it.name == normalizedName }
             .toTypedArray()
     }
 
